@@ -14,6 +14,8 @@ public class FeedbackService implements  FeedbackGeneratorPort{
     @Override
     public Feedback generarFeedback(EvaluacionRequest request) {
 
+        if (request == null) { return null; }
+
         String liderazgo = clasificar(request.getLiderazgo());
         String comunicacion = clasificar(request.getComunicacion());
         String tiempo = clasificar(request.getTiempo());
