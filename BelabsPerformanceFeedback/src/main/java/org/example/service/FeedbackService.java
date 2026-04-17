@@ -127,4 +127,8 @@ public class FeedbackService implements FeedbackGeneratorPort {
 
         return new Feedback(introduccion, desarrollo, cierre);
     }
+    
+    public Feedback editarFeedback(Feedback feedback) {
+        return feedback;
+    }
 }
