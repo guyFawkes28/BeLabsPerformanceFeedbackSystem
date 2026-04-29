@@ -1,0 +1,192 @@
+Estructura del proyecto (paquetes y clases)
+
+Base package:
+org.belabs.feedback
+
+Subpaquetes:
+
+1. model
+
+* Skill
+* Laboratory
+* Coder
+* AdminUser
+* LaboratorySkill (opcional para mapear relación)
+
+2. repository
+
+* DatabaseConnection (manejo de conexión JDBC)
+* SkillRepository
+* LaboratoryRepository
+* CoderRepository
+* AdminUserRepository
+
+3. service
+
+* AuthService
+* SkillService
+* LaboratoryService
+* FeedbackService
+* EmailService
+
+4. controller
+
+* LoginController
+* MenuController
+* SkillController
+* LaboratoryController
+* FeedbackController
+
+5. view (si no usas FXML, pueden ser clases JavaFX directamente)
+
+* LoginView
+* MenuView
+* SkillView
+* LaboratoryView
+* FeedbackView
+
+6. util
+
+* PasswordUtil (BCrypt)
+* EmailUtil (configuración SMTP)
+* AlertUtil (JavaFX alerts)
+
+---
+
+Clases clave (definición mínima esperada)
+
+Skill:
+
+* int id
+* String nombre
+* String alto
+* String medio
+* String bajo
+* String generarFeedback(int valor)
+
+Laboratory:
+
+* int id
+* String nombre
+* List<Skill> skills
+
+Coder:
+
+* int id
+* String nombre
+* String email
+
+AdminUser:
+
+* int id
+* String nombre
+* String email
+* String passwordHash
+
+---
+
+Repositorios (responsabilidad)
+
+SkillRepository:
+
+* List<Skill> findAll()
+* void save(Skill skill)
+
+LaboratoryRepository:
+
+* void save(Laboratory lab)
+* List<Laboratory> findAll()
+* List<Skill> findSkillsByLaboratoryId(int id)
+
+CoderRepository:
+
+* Coder findByEmail(String email)
+* List<Coder> findAll()
+
+AdminUserRepository:
+
+* AdminUser findByEmail(String email)
+
+---
+
+Servicios (lógica)
+
+AuthService:
+
+* boolean login(String email, String password)
+
+SkillService:
+
+* List<Skill> getAllSkills()
+* void createSkill(Skill skill)
+
+LaboratoryService:
+
+* void createLaboratory(String nombre, List<Integer> skillIds)
+* List<Laboratory> getAllLaboratories()
+
+FeedbackService:
+
+* String generarFeedback(Laboratory lab, Map<Skill, Integer> notas)
+
+EmailService:
+
+* void sendEmail(String to, String subject, String body)
+
+---
+
+Controllers (conectar UI con servicios)
+
+LoginController:
+
+* handleLogin()
+
+MenuController:
+
+* navegación entre vistas
+
+SkillController:
+
+* handleCreateSkill()
+* loadSkills()
+
+LaboratoryController:
+
+* handleCreateLaboratory()
+* loadSkills()
+
+FeedbackController:
+
+* handleGenerateFeedback()
+* handleSendEmail()
+
+---
+
+Orden de implementación (muy importante)
+
+1. DatabaseConnection (conexión a PostgreSQL funcionando)
+2. Modelos (Skill, Laboratory, etc.)
+3. Repositories (empezar por SkillRepository)
+4. Servicios (SkillService, luego AuthService)
+5. Login (UI + Controller)
+6. CRUD de Skills (UI básica)
+7. Laboratorios (selección de 4 skills)
+8. Generación de feedback
+9. Envío de email
+
+---
+
+Notas importantes para la IA:
+
+* Usar JDBC simple con PreparedStatement
+* No usar frameworks adicionales
+* Mantener código simple y legible
+* Manejar excepciones con try-catch básicos
+* JavaFX con escenas simples (no sobrecomplicar UI)
+* Usar ObservableList cuando sea necesario en tablas
+* No usar patrones complejos (evitar overengineering)
+
+---
+
+Resultado esperado:
+Proyecto Maven ejecutable con JavaFX donde todas las capas están conectadas correctamente y el flujo completo funciona sin errores.

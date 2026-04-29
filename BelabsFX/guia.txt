@@ -1,0 +1,195 @@
+Proyecto: Belabs Feedback Generator (MVP)
+
+Objetivo:
+Aplicación de escritorio en JavaFX para generar feedback automático basado en evaluación de habilidades. El sistema debe permitir gestionar habilidades, crear laboratorios (conjunto de 4 habilidades), evaluar personas y generar feedback profesional que luego se envía por correo.
+
+Stack:
+
+* Java 17+
+* JavaFX
+* Maven
+* PostgreSQL
+* JDBC (sin ORM)
+* BCrypt para contraseñas
+* JavaMail (SMTP básico)
+
+Arquitectura:
+Usar arquitectura por capas simple:
+
+* controller (UI logic)
+* service (lógica de negocio)
+* repository (acceso a datos JDBC)
+* model (entidades)
+* util (helpers)
+
+Flujo principal:
+
+1. Login
+2. Menú principal con opciones:
+
+   * Preparar nuevo laboratorio
+   * Agregar nueva habilidad
+   * Generar feedback de laboratorio
+
+Reglas de negocio:
+
+* Cada habilidad tiene 3 niveles: alto, medio, bajo.
+* Clasificación:
+
+  * > =80 → alto
+  * > =60 → medio
+  * <60 → bajo
+* El feedback final es la concatenación del feedback de 4 habilidades.
+* El tono debe ser profesional, constructivo y accionable.
+* No mostrar números en el feedback final.
+
+Módulos:
+
+1. Login:
+
+* Validar email + password contra admin_users
+* Password almacenado con BCrypt
+
+2. Habilidades:
+
+* CRUD básico desde DB (tabla skills)
+* Campos: nombre, alto, medio, bajo
+* UI para crear nueva habilidad
+
+3. Laboratorios:
+
+* Crear laboratorio seleccionando exactamente 4 habilidades existentes
+* Guardar relación en laboratory_skills
+
+4. Coders:
+
+* Seleccionar por email o id
+* (CRUD básico opcional)
+
+5. Generación de feedback:
+
+* Seleccionar coder
+* Seleccionar laboratorio
+* Ingresar 4 notas (1–100)
+* Generar feedback usando lógica de niveles por habilidad
+* Mostrar resultado
+* Enviar por email
+
+Modelo:
+
+Skill:
+
+* id
+* nombre
+* alto
+* medio
+* bajo
+* metodo generarFeedback(int valor)
+
+Laboratory:
+
+* id
+* nombre
+* List<Skill>
+
+Coder:
+
+* id
+* nombre
+* email
+
+AdminUser:
+
+* id
+* nombre
+* email
+* passwordHash
+
+Servicios:
+
+* AuthService
+* SkillService
+* LaboratoryService
+* FeedbackService
+* EmailService
+
+Repositorios:
+
+* JDBC puro
+* CRUD para todas las entidades
+
+Base de datos PostgreSQL:
+
+CREATE TABLE admin_users (
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(100),
+email VARCHAR(100) UNIQUE,
+password_hash TEXT
+);
+
+CREATE TABLE coders (
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(100),
+email VARCHAR(100) UNIQUE
+);
+
+CREATE TABLE skills (
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(100),
+alto TEXT,
+medio TEXT,
+bajo TEXT
+);
+
+CREATE TABLE laboratories (
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(100)
+);
+
+CREATE TABLE laboratory_skills (
+id SERIAL PRIMARY KEY,
+laboratory_id INT REFERENCES laboratories(id),
+skill_id INT REFERENCES skills(id)
+);
+
+UI (mínima pero funcional):
+
+* LoginView
+* MenuView
+* SkillView (crear/listar habilidades)
+* LaboratoryView (crear laboratorio seleccionando 4 skills)
+* FeedbackView (flujo completo)
+
+Datos iniciales:
+Precargar en DB estas habilidades (con textos alto/medio/bajo coherentes):
+
+* Liderazgo
+* Comunicación asertiva
+* Gestión del tiempo
+* Resolución de conflictos
+* Flexibilidad y adaptabilidad
+* Resistencia a la frustración
+* Construcción colectiva
+* Gestión emocional
+* Argumentación
+* Desarrollo de sí mismo
+* Pensamiento crítico
+* Orientación a resultados
+
+Restricciones:
+
+* Código claro y simple (MVP)
+* Evitar sobreingeniería
+* Manejo básico de errores
+* Separación por capas consistente
+* UI funcional, no necesariamente estética
+
+Resultado esperado:
+Aplicación ejecutable donde:
+
+* Se puede iniciar sesión
+* Crear habilidades
+* Crear laboratorios
+* Evaluar una persona
+* Generar feedback automático
+* Enviar feedback por email
